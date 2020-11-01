@@ -344,12 +344,16 @@ input[type=number] {
 }
 
 .btn-attestation {
-  padding: 0.9em;
+  padding: 0.2em 0.5em;
   font-size: 1.2em;
   font-weight: bold;
   color: white;
   background-color: #000191;
-  border-radius: 0.5em;
+  border-radius: 0.3em;
+}
+
+.mt-5 {
+  margin-top: 2rem !important;
 }
 
 .btn-attestation:hover {

@@ -115,47 +115,50 @@ export function prepareInputs(formInputs, reasonInputs, reasonFieldset, reasonAl
     })
   })
 
-  $('#generate-btn').addEventListener('click', async (event) => {
-    event.preventDefault()
+  const buttons = $$('.generate-btn');
+  [...buttons].forEach(function(button) {
+    button.addEventListener('click', async (event) => {
+      event.preventDefault()
 
-    const reasons = getReasons(reasonInputs)
-    if (!reasons) {
-      reasonFieldset.classList.add('fieldset-error')
-      reasonAlert.classList.remove('hidden')
-      reasonFieldset.scrollIntoView && reasonFieldset.scrollIntoView()
-      return
-    }
-
-    const invalid = validateAriaFields()
-    if (invalid) {
-      return
-    }
-
-    const formValues = getProfile(formInputs);
-    Object.keys(formValues).map((key) => {
-      if (['heuresortie', 'datesortie'].includes(key)) {
-        return;
+      const reasons = getReasons(reasonInputs)
+      if (!reasons) {
+        reasonFieldset.classList.add('fieldset-error')
+        reasonAlert.classList.remove('hidden')
+        reasonFieldset.scrollIntoView && reasonFieldset.scrollIntoView()
+        return
       }
-      setFieldLocalStorage(key, formValues[key])
-    });
 
-    const pdfBlob = await generatePdf(formValues, reasons, pdfBase)
+      const invalid = validateAriaFields()
+      if (invalid) {
+        return
+      }
 
-    const creationInstant = new Date()
-    const creationDate = creationInstant.toLocaleDateString('fr-CA')
-    const creationHour = creationInstant
-      .toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
-      .replace(':', '-')
+      const formValues = getProfile(formInputs);
+      Object.keys(formValues).map((key) => {
+        if (['heuresortie', 'datesortie'].includes(key)) {
+          return;
+        }
+        setFieldLocalStorage(key, formValues[key])
+      });
 
-    downloadBlob(pdfBlob, `attestation-${creationDate}_${creationHour}.pdf`)
+      const pdfBlob = await generatePdf(formValues, reasons, pdfBase)
 
-    snackbar.classList.remove('d-none')
-    setTimeout(() => snackbar.classList.add('show'), 100)
+      const creationInstant = new Date()
+      const creationDate = creationInstant.toLocaleDateString('fr-CA')
+      const creationHour = creationInstant
+        .toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
+        .replace(':', '-')
 
-    setTimeout(function () {
-      snackbar.classList.remove('show')
-      setTimeout(() => snackbar.classList.add('d-none'), 500)
-    }, 6000)
+      downloadBlob(pdfBlob, `attestation-${creationDate}_${creationHour}.pdf`)
+
+      snackbar.classList.remove('d-none')
+      setTimeout(() => snackbar.classList.add('show'), 100)
+
+      setTimeout(function () {
+        snackbar.classList.remove('show')
+        setTimeout(() => snackbar.classList.add('d-none'), 500)
+      }, 6000)
+    })
   })
 }
 
