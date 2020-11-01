@@ -33,7 +33,7 @@ const conditions = {
   },
 }
 
-function validateAriaFields () {
+function validateAriaFields() {
   return Object.keys(conditions)
     .map((field) => {
       const fieldData = conditions[field]
@@ -53,14 +53,18 @@ function validateAriaFields () {
     .includes(true)
 }
 
-export function setReleaseDateTime (releaseDateInput) {
+export function setReleaseDateTime(releaseDateInput) {
   const loadedDate = new Date()
   releaseDateInput.value = getFormattedDate(loadedDate)
 }
 
-export function getProfile (formInputs) {
+export function getProfile(formInputs) {
   const fields = {}
   for (const field of formInputs) {
+    if (field.id.includes('checkbox')) {
+      continue;
+    }
+
     let value = field.value
     if (field.id === 'field-datesortie') {
       const dateSortie = field.value.split('-')
@@ -71,14 +75,14 @@ export function getProfile (formInputs) {
   return fields
 }
 
-export function getReasons (reasonInputs) {
+export function getReasons(reasonInputs) {
   const reasons = reasonInputs
     .filter(input => input.checked)
     .map(input => input.value).join(', ')
   return reasons
 }
 
-export function prepareInputs (formInputs, reasonInputs, reasonFieldset, reasonAlert, snackbar) {
+export function prepareInputs(formInputs, reasonInputs, reasonFieldset, reasonAlert, snackbar) {
   formInputs.forEach((input) => {
     const exempleElt = input.parentNode.parentNode.querySelector('.exemple')
     const validitySpan = input.parentNode.parentNode.querySelector('.validity')
@@ -127,9 +131,15 @@ export function prepareInputs (formInputs, reasonInputs, reasonFieldset, reasonA
       return
     }
 
-    console.log(getProfile(formInputs), reasons)
+    const formValues = getProfile(formInputs);
+    Object.keys(formValues).map((key) => {
+      if (['heuresortie', 'datesortie'].includes(key)) {
+        return;
+      }
+      setFieldLocalStorage(key, formValues[key])
+    });
 
-    const pdfBlob = await generatePdf(getProfile(formInputs), reasons, pdfBase)
+    const pdfBlob = await generatePdf(formValues, reasons, pdfBase)
 
     const creationInstant = new Date()
     const creationDate = creationInstant.toLocaleDateString('fr-CA')
@@ -149,7 +159,7 @@ export function prepareInputs (formInputs, reasonInputs, reasonFieldset, reasonA
   })
 }
 
-export function prepareForm () {
+export function prepareForm() {
   const formInputs = $$('#form-profile input')
   const snackbar = $('#snackbar')
   const reasonInputs = [...$$('input[name="field-reason"]')]
@@ -158,4 +168,12 @@ export function prepareForm () {
   const releaseDateInput = $('#field-datesortie')
   setReleaseDateTime(releaseDateInput)
   prepareInputs(formInputs, reasonInputs, reasonFieldset, reasonAlert, snackbar)
+}
+
+export function setFieldLocalStorage(field, value) {
+  window.localStorage.setItem(field, value);
+}
+
+export function getFieldLocalStorage(field) {
+  return window.localStorage.getItem(field);
 }

@@ -5,6 +5,7 @@ import '../css/main.css'
 import formData from '../form-data.json'
 
 import { $, appendTo, createElement } from './dom-utils'
+import { getFieldLocalStorage } from './form-util'
 
 const createTitle = () => {
   const h2 = createElement('h2', { className: 'titre-2', innerHTML: 'Remplissez en ligne votre déclaration numérique : ' })
@@ -56,6 +57,7 @@ const createFormGroup = ({
     placeholder,
     required: true,
     type,
+    value: getFieldLocalStorage(name) || '',
   }
 
   const input = createElement('input', inputAttrs)
@@ -133,7 +135,7 @@ const createReasonFieldset = (reasonsData) => {
   return fieldset
 }
 
-export function createForm () {
+export function createForm() {
   const form = $('#form-profile')
   // Évite de recréer le formulaire s'il est déjà créé par react-snap (ou un autre outil de prerender)
   if (form.innerHTML !== '') {
