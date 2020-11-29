@@ -102,12 +102,12 @@
       "type": "list",
       "items": [
         {
-          "code": "achats",
+          "code": "achats_culturel_cultuel",
           "label": "Achats"
         },
         {
           "code": "sport_animaux",
-          "label": "Sortie 1h / 1km (sport, etc.)"
+          "label": "Sortie 3h / 20km (sport, etc.)"
         },
         {
           "code": "travail",
